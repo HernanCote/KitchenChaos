@@ -1,10 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
+using Events;
 
 public class Player : MonoBehaviour
 {
+    public static Player Instance { get; private set; }
+    
     private const float ROTATE_SPEED = 12f;
     
     private const float PLAYER_RADIUS = .7f;
@@ -13,16 +14,27 @@ public class Player : MonoBehaviour
     
     [SerializeField]
     private float moveSpeed = 7f;
-    
     [SerializeField]
     private GameInput gameInput;
-
     [SerializeField]
     private LayerMask countersLayerMask;
 
     private bool _isWalking;
     private Vector3 _lastInteractDirection;
+    private ClearCounter _selectedCounter;
+    
+    
+    public event EventHandler<OnSelectedCounterEventArgs> OnSelectedCounterChanged;
 
+
+    private void Awake()
+    {
+        if (Instance is not null)
+            Debug.LogError("There is more than one Player instance in the scene!");
+        
+        Instance = this;
+    }
+    
     private void Start()
     {
         gameInput.OnInteractAction += GameInputOnInteractAction;
@@ -31,6 +43,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         HandleMovement();
+        HandleInteraction();
     }
 
     public bool IsWalking => _isWalking;
@@ -70,26 +83,49 @@ public class Player : MonoBehaviour
         transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * ROTATE_SPEED);
     }
 
-    private static bool PlayerCanMove(Vector3 currentPosition, Vector3 moveDirection, float moveDistance)
-    {
-        return !Physics.CapsuleCast(currentPosition, currentPosition + Vector3.up * PLAYER_HEIGHT, PLAYER_RADIUS, moveDirection, moveDistance);
-    }
-
-    private void GameInputOnInteractAction(object sender, System.EventArgs e)
+    private void HandleInteraction()
     {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        
         Vector3 moveDirection = new Vector3(inputVector.x, 0f, inputVector.y);
-
+        
         if (moveDirection != Vector3.zero)
             _lastInteractDirection = moveDirection;
-
+        
         if (Physics.Raycast(transform.position, _lastInteractDirection, out RaycastHit raycastHit, INTERACT_DISTANCE, countersLayerMask))
         {
             if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
             {
-                clearCounter.Interact();
+                if (clearCounter != _selectedCounter)
+                    SetSelectedCounter(clearCounter);
+            }
+            else
+            {
+                SetSelectedCounter(null);
             }
         }
+        else
+        {
+            SetSelectedCounter(null);
+        }
+    }
+
+    private static bool PlayerCanMove(Vector3 currentPosition, Vector3 moveDirection, float moveDistance) =>
+        !Physics.CapsuleCast(currentPosition, currentPosition + Vector3.up * PLAYER_HEIGHT, PLAYER_RADIUS, moveDirection, moveDistance);
+
+    private void GameInputOnInteractAction(object sender, System.EventArgs e)
+    {
+        if (_selectedCounter is not null)
+        {
+            _selectedCounter.Interact();
+        }
+    }
+
+
+    private void SetSelectedCounter(ClearCounter selectedCounter)
+    {
+        _selectedCounter = selectedCounter;
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterEventArgs { SelectedCounter = _selectedCounter});
     }
     
 }
