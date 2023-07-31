@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2958220183974390020}
+  - component: {fileID: 5837576994461847714}
   m_Layer: 0
   m_Name: CheeseBlock
   m_TagString: Untagged
@@ -32,6 +33,19 @@ Transform:
   - {fileID: 8175657494556200134}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5837576994461847714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8704720069768664471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acd679d8eb3d0456b9ca6458a7d19893, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kitchenObjectSO: {fileID: 11400000, guid: 7ef19be3bb5b54c2ba3973c66ca3c91e, type: 2}
 --- !u!1001 &5016950782049704518
 PrefabInstance:
   m_ObjectHideFlags: 0
