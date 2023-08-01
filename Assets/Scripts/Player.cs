@@ -1,4 +1,5 @@
 using System;
+using Counters;
 using UnityEngine;
 using Events;
 using Interfaces;
@@ -24,7 +25,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private bool _isWalking;
     private Vector3 _lastInteractDirection;
-    private ClearCounter _selectedCounter;
+    private BaseCounter _selectedCounter;
     private KitchenObject _kitchenObject;
     
     public event EventHandler<OnSelectedCounterEventArgs> OnSelectedCounterChanged;
@@ -97,10 +98,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         
         if (Physics.Raycast(transform.position, _lastInteractDirection, out RaycastHit raycastHit, INTERACT_DISTANCE, countersLayerMask))
         {
-            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            if (raycastHit.transform.TryGetComponent(out BaseCounter baseCounter))
             {
-                if (clearCounter != _selectedCounter)
-                    SetSelectedCounter(clearCounter);
+                if (baseCounter != _selectedCounter)
+                    SetSelectedCounter(baseCounter);
             }
             else
             {
@@ -125,7 +126,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
 
 
-    private void SetSelectedCounter(ClearCounter selectedCounter)
+    private void SetSelectedCounter(BaseCounter selectedCounter)
     {
         _selectedCounter = selectedCounter;
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterEventArgs { SelectedCounter = _selectedCounter});
