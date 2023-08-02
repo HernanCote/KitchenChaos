@@ -13,6 +13,11 @@ namespace Counters
         private KitchenObject _kitchenObject;
         
         public abstract void Interact(Player player);
+
+        public virtual void InteractAlternate(Player player)
+        {
+            Debug.LogError("InteractAlternate from base counter called!");
+        }
         
         public Transform GetKitchenObjectFollowTransform()
         {
