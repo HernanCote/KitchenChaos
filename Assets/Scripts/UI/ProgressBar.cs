@@ -25,6 +25,13 @@ namespace UI
       {
          barImage.fillAmount = e.ProgressNormalized;
          
+         barImage.color = e.ProgressNormalized switch
+         {
+            < 0.25f => Color.red,
+            < 0.75f => Color.yellow,
+            >= 0.75f => Color.green,
+         };
+         
          if (e.ProgressNormalized is 0f or 1f)
             Hide();
          else

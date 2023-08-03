@@ -26,7 +26,11 @@ namespace Counters
             
                 player.GetKitchenObject().SetKitchenObjectParent(this);
                 _cuttingProgress = 0;
+                
                 var cuttingRecipeSo = GetOutputForInput(GetKitchenObject().GetKitchenObjectSO());
+                if (cuttingRecipeSo is null)
+                    return;
+                
                 OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs
                 {
                     ProgressNormalized = (float) _cuttingProgress / cuttingRecipeSo.cuttingProgressMax
