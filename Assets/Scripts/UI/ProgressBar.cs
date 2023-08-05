@@ -6,22 +6,30 @@ namespace UI
    using System;
    using Counters;
    using Events;
+   using Interfaces;
 
    public class ProgressBar : MonoBehaviour
    {
       [SerializeField] 
-      private CuttingCounter cuttingCounter;
+      private GameObject ProgressGameObject;
       [SerializeField] 
       private Image barImage;
 
+      private IProgressable _progressable;
+      
       private void Start()
       {
-         cuttingCounter.OnProgressChanged += CuttingCounterOnProgressChanged;
+         _progressable = ProgressGameObject.GetComponent<IProgressable>();
+
+         if (_progressable is null)
+            throw new NullReferenceException("ProgressGameObject does not have a component that implements IProgressable");
+         
+         _progressable.OnProgressChanged += OnProgressChanged;
          barImage.fillAmount = 0;
          Hide();
       }
 
-      private void CuttingCounterOnProgressChanged(object sender, OnProgressChangedEventArgs e)
+      private void OnProgressChanged(object sender, OnProgressChangedEventArgs e)
       {
          barImage.fillAmount = e.ProgressNormalized;
          

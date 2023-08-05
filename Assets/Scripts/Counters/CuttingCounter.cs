@@ -3,13 +3,13 @@ namespace Counters
     using System;
     using System.Linq;
     using Events;
+    using Interfaces;
     using ScriptableObjectDefinitions;
     using UnityEngine;
 
-    public class CuttingCounter : BaseCounter
+    public class CuttingCounter : BaseCounter, IProgressable
     {
         public event EventHandler<OnProgressChangedEventArgs> OnProgressChanged;
-
         public event EventHandler OnCut;
 
         [SerializeField]
